@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @file
+ * Contains radicati_views_addons.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\radicati_views_addons\Form\RadJumpMenuForm;
+use Drupal\views\Views;
+use Drupal\views\ViewExecutable;
+
+
+/**
+ * Implements hook_theme().
+ */
+function radicati_views_switchboard_theme($existing, $type, $theme, $path)
+{
+  $hooks['views_radicati_switchboard'] = [
+    'preprocess functions' => [
+      'template_preprocess_views_switchboard',
+    ],
+  ];
+
+  return $hooks;
+}
+
+
+/**
+ * Fields are irrelevant because you can't get them in code for some stupid reason.
+ *
+ *
+ */
+function template_preprocess_views_radicati_switchboard(array &$vars) {
+  $view = $vars['view'];
+  $options = $view->style_plugin->options;
+
+  $extra = $options;
+
+  // Get the label and url/content reference settings
+  $extra['label_field'] = $options['label_field'];
+  $extra['url_field'] = $options['url_field'];
+
+  foreach($vars['rows'] as $key => $row) {
+    // Make sure label and url fields exist.
+    if(empty($view->field[$extra['label_field']]) ||
+       empty($view->field[$extra['url_field']]) ||
+      $view->field[$extra['url_field']]->getValue($row) == false) {
+      continue;
+    }
+
+    // Get Value for View Field
+    $label = $view->field[$extra['label_field']]->getValue($row);
+    $value = $view->field[$extra['url_field']]->getValue($row);
+
+    // If the value is a number we assume it's a node id and get the url to the node
+    if($value != false && is_numeric($value)) {
+      $node = \Drupal\node\Entity\Node::load($value);
+      $url = $node->toUrl()->toString();
+    } else {
+      $url = $value;
+    }
+
+    $extra['items'][$url] = $label;
+  }
+
+  $vars['form'] = \Drupal::formBuilder()->getForm('Drupal\radicati_views_switchboard\Form\RadicatiSwitchboardForm', $extra);
+
+}

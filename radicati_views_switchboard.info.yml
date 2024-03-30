@@ -1,0 +1,5 @@
+name: 'Radicati Views Switchboard'
+type: module
+description: 'Views addon that adds a formatter that outputs a select list which allows the user to navigate to a page selected in that list.'
+core_version_requirement: ^8 || ^9 || ^10
+package: "radicati"
