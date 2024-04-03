@@ -91,7 +91,7 @@ class RadicatiSwitchboardForm extends FormBase {
   public function ajaxOnSubmit(array &$form, FormStateInterface $form_state) {
     if($this->validateForm($form, $form_state)) {
       $item = $form_state->getValue('item');
-      
+
       if($item == '') {
         return null;
       }
