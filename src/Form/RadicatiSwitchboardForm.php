@@ -20,7 +20,7 @@ class RadicatiSwitchboardForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state, $extra = []) {
 
     if(!empty($extra['default_value_label'])) {
-      $extra['items'] = ['|default|' => $extra['default_value_label'] ] + $extra['items'];
+      $extra['items'] = ['' => $extra['default_value_label'] ] + $extra['items'];
     }
 
     $form['item'] = [
@@ -91,6 +91,10 @@ class RadicatiSwitchboardForm extends FormBase {
   public function ajaxOnSubmit(array &$form, FormStateInterface $form_state) {
     if($this->validateForm($form, $form_state)) {
       $item = $form_state->getValue('item');
+      
+      if($item == '') {
+        return null;
+      }
       //$url = \Drupal\Core\Url::fromRoute('entity.node.canonical', ['node' => $item]);
 
       $response = new AjaxResponse();
