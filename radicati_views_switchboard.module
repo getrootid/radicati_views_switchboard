@@ -56,7 +56,12 @@ function template_preprocess_views_radicati_switchboard(array &$vars) {
     // If the value is a number we assume it's a node id and get the url to the node
     if($value != false && is_numeric($value)) {
       $node = \Drupal\node\Entity\Node::load($value);
-      $url = $node->toUrl()->toString();
+      if(!empty($node)) {
+        $url = $node->toUrl()->toString();
+      } else {
+        $url = $value;
+      }
+
     } else {
       $url = $value;
     }
